@@ -47,4 +47,3 @@ $(function() {
 		var y = $(this).data('y');
 	})
 })
-
