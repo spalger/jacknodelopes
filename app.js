@@ -7,6 +7,7 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
+  , _ = require('underscore')
   , path = require('path');
 
 var app = express();
@@ -14,7 +15,11 @@ var app = express();
 var server      = require('http').createServer(app)
 var io          = require('socket.io').listen(server);
 
-var board       = {};
+var board       = {
+    rows    : 6,
+    columns : 6,
+    pieces  : []
+};
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -36,7 +41,20 @@ server.listen(app.get('port'), function(){
 });
 
 io.sockets.on('connection', function (socket) {
+
     socket.on('request-board', function (data) {
         socket.emit('board',  board );
+    });
+
+    socket.on('place-piece', function (data) {
+        var minRow = board.rows;
+
+        for( var i = 0 ; board.pieces.length; i++ ) {
+            if ( board.pieces[i].column = data.column &&
+                 board.pieces[i].row < minRow )
+                minRow = board.pieces[i].row;
+        }
+        data.row = minRow - 1;
+        board.pieces.push( data );
     });
 });
