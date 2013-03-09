@@ -75,7 +75,15 @@ $(function() {
 	});
 
 	socket.on('winning-player', function (winner) {
-		board.$.html('<div class="piece '+player_css_classes[winner]+'"></div><h2>'+winner+' won the bloody game!!</h2>');
+		board.$.fadeOut('slow', function() {
+			board.$.html('<h2>'+winner+' won the bloody game!!</h2>').show();
+			$badge = $('<div class="piece '+player_css_classes[winner]+'"></div>').css({
+				position: 'relative',
+				margin: '5px auto'
+			});
+			board.$.prepend($badge);
+		});
+		$('#make-your-move').hide();
 	})
 
 	socket.on('current-player', function (player) {
