@@ -53,6 +53,10 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('set-name', function ( name ) {
         socket.playerName = name;
+        if ( board.currentPlayer == null ) {
+            board.currentPlayer = socket.playerName;
+            io.sockets.emit('current-player', board.currentPlayer  );
+        }
     });
 
     socket.on('new-piece', function (piece) {
