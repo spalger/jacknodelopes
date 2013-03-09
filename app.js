@@ -14,6 +14,14 @@ var app = express();
 var server      = require('http').createServer(app)
 var io          = require('socket.io').listen(server);
 
+var cssClasses  = [
+  'jackalope',
+  'fennecfox',
+  'scorpion',
+  'meercat',
+  'gilamonster',
+  'roadrunner'
+];
 
 var board       = {
     currentPlayer   : null,
@@ -53,6 +61,16 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('set-name', function ( name ) {
         socket.playerName = name;
+        socket.cssClassName = cssClasses.shift();
+        cssClasses.push(socket.cssClassName);
+
+        var players = {};
+        var socketClients = io.sockets.clients();
+        for(var i = 0; i < socketClients.length; i++) {
+          players[socketClients[i].playerName] = socketClients[i].cssClassName;
+        }
+        io.sockets.emit('player-css-classes', players);
+
         if ( board.currentPlayer == null ) {
             board.currentPlayer = socket.playerName;
             io.sockets.emit('current-player', board.currentPlayer  );
