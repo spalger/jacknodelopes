@@ -1,0 +1,19 @@
+<html>
+<head>
+    <script src="index.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:1337');
+        socket.on('board', function (board) {
+            console.log(board);
+        });
+
+        socket.emit('request-board');
+    </script>
+</head>
+<body>
+<div id="board">
+
+</div>
+</body>
+</html>
