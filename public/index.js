@@ -1,4 +1,4 @@
-
+var socket;
 var my_player_name;
 var player_css_classes;
 var board = {

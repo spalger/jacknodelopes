@@ -27,7 +27,7 @@ var board       = {
     currentPlayer   : null,
     rows            : 6,
     columns         : 6,
-    pieces          : [ { row: 3, column: 2, player : "red" } ]
+    pieces          : []
 };
 
 app.configure(function(){
@@ -41,9 +41,6 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
 
 server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
@@ -78,7 +75,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('new-piece', function (piece) {
-
+        piece.player = socket.playerName;
         var minRow = board.rows;
 
         for( var i = 0 ; i < board.pieces.length; i++ ) {
@@ -109,7 +106,54 @@ io.sockets.on('connection', function (socket) {
 
         board.currentPlayer = socketClients[ currentPlayerIndex ].playerName;
 
-        io.sockets.emit('current-player', board.currentPlayer  );
+        var win = gameComplete();
+
+        if ( win ) {
+            io.sockets.emit('winning-player', win  );
+            board       = {
+                currentPlayer   : null,
+                rows            : 6,
+                columns         : 6,
+                pieces          : []
+            };
+        }
+        else
+            io.sockets.emit('current-player', board.currentPlayer  );
 
     });
 });
+
+function gameComplete() {
+    var win = false;
+    _.each( board.pieces, function( piece ){
+        if ( valueOfCell( piece.row, piece.column ) != null &&
+             valueOfCell( piece.row + 1, piece.column ) &&
+             valueOfCell( piece.row + 2, piece.column ) &&
+             valueOfCell( piece.row + 3, piece.column ) )
+        win = valueOfCell( piece.row, piece.column );
+    });
+
+    _.each( board.pieces, function( piece ){
+        if ( valueOfCell( piece.row, piece.column ) != null &&
+             valueOfCell( piece.row, piece.column + 1 ) &&
+             valueOfCell( piece.row, piece.column + 2 ) &&
+             valueOfCell( piece.row, piece.column + 3 ) )
+        win = valueOfCell( piece.row, piece.column );
+    });
+
+    return win;
+}
+
+function valueOfCell( row, column )
+{
+    var value = null;
+
+    var cell = _.filter( board.pieces, function( piece ){
+        return piece.row == row && piece.column == column;
+    });
+
+    if ( cell && cell[0] )
+        return cell[0].player;
+
+    return null;
+}
