@@ -1,13 +1,14 @@
 
 var my_player_name;
 var board = {
+	$: null,
 	rows: 6,
-	cols: 6,
+	columns: 6,
 	pieces: []
 };
 
 function drawBoard() {
-	var rows, cols, html = '<table>';
+	var html = '<table>';
 	for ( row = 0; row < board.rows; row ++ ) {
 		html += '<tr>';
 		for ( col = 0; col < board.columns; col ++ ) {
@@ -15,14 +16,14 @@ function drawBoard() {
 		}
 		html += '</tr>';
 	}
-	$('#board').html(html+'</table>');
+	board.$.html(html+'</table>');
 	board.pieces.forEach(function(piece){
 		addPiece(piece)
 	})
 }
 
 function addPiece(piece) {
-	board.pieces.push();
+	board.pieces.push(piece);
 	// colors
 	$cell = $('#board tr:nth('+piece.row+') td:nth('+piece.column+')');
 	var position = $cell.position();
@@ -38,13 +39,25 @@ function addPiece(piece) {
 }
 
 $(function() {
+    board.$ = $('#board');
 
-	$('input[name=player-name]').change(function() {
-		my_player_name = this.value;
+	board.$.hide();
+
+	drawBoard();
+
+	$('input[name=player-name]').keyup(function(ev) {
+		if (ev.which === 13) {
+			my_player_name = this.value;
+			$('.player-name').text(my_player_name)
+			socket.emit('set-name', my_player_name);
+			$(this).remove();
+			board.$.show();
+			drawBoard();
+		}
 	});
 
-	$('#board').on('click', 'td', function() {
-		socket.emit('new-column', { column: $(this).data('col'), player: my_player_name });
+	board.$.on('click', 'td', function() {
+		socket.emit('new-piece', $(this).data('col'));
 	});
 
 	var socket = io.connect('http://localhost:3000');
@@ -52,4 +65,13 @@ $(function() {
 	socket.on('new-piece', function (piece) {
 		addPiece(piece);
 	});
+
+	socket.on('current-player', function(player) {
+		if (player === my_player_name) {
+			is_my_turn = true;
+			$('#make_your_move').show();
+		} else {
+			is_my_turn = false;
+		}
+	})
 });
