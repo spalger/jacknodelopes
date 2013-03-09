@@ -19,7 +19,7 @@ var io          = require('socket.io').listen(server);
 var board       = {
     rows    : 6,
     columns : 6,
-    pieces  : []
+    pieces  : [ { row: 3, column: 2, player : "red" } ]
 };
 
 app.configure(function(){
@@ -43,7 +43,7 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function (socket) {
 
-    for( var i = 0; i < board.pieces; i++  )  {
+    for( var i = 0; i < board.pieces.length; i++  )  {
         socket.emit( 'new-piece', board.pieces[i] );
     }
 
@@ -64,5 +64,6 @@ io.sockets.on('connection', function (socket) {
         piece.row = minRow - 1;
         board.pieces.push( piece );
         io.sockets.emit( 'new-piece', piece );
+
     });
 });
