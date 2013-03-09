@@ -16,9 +16,10 @@ var io          = require('socket.io').listen(server);
 
 
 var board       = {
-    rows    : 6,
-    columns : 6,
-    pieces  : [ { row: 3, column: 2, player : "red" } ]
+    currentPlayer   : null,
+    rows            : 6,
+    columns         : 6,
+    pieces          : [ { row: 3, column: 2, player : "red" } ]
 };
 
 app.configure(function(){
@@ -50,6 +51,10 @@ io.sockets.on('connection', function (socket) {
         socket.emit('board',  board );
     });
 
+    socket.on('set-name', function ( name ) {
+        socket.playerName = name;
+    });
+
     socket.on('new-piece', function (piece) {
 
         var minRow = board.rows;
@@ -63,6 +68,24 @@ io.sockets.on('connection', function (socket) {
         piece.row = minRow - 1;
         board.pieces.push( piece );
         io.sockets.emit( 'new-piece', piece );
+
+        var socketClients = io.sockets.clients();
+
+        var currentPlayerIndex = socketClients.length;
+
+        if ( board.currentPlayer === null ) {
+            board.currentPlayer = socketClients[0].playerName;
+        }
+
+        for ( var i = 0; i < socketClients.length; i++ ) {
+            if ( socketClients[ i ].playerName == board.currentPlayer ) {
+                currentPlayerIndex = i + 1;
+            }
+        }
+        if ( currentPlayerIndex == socketClients.length )
+            currentPlayerIndex = 0;
+
+        io.sockets.emit('current-player', socketClients[ currentPlayerIndex ].playerName  );
 
     });
 });

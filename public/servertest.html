@@ -3,6 +3,7 @@
     <script src="index.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        var playerName = Math.floor( Math.random() * 100 );
         var socket = io.connect('http://localhost:3000');
         socket.on('board', function (board) {
             console.log(board);
@@ -11,6 +12,10 @@
         socket.on('new-piece', function (piece) {
             console.log(piece);
         });
+        socket.on('current-player', function (playerName) {
+            console.log(playerName);
+        });
+        socket.emit("set-name", playerName );
     </script>
 </head>
 <body>
