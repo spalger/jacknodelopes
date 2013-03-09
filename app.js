@@ -108,18 +108,20 @@ io.sockets.on('connection', function (socket) {
 function gameComplete() {
     var win = false;
     _.each( board.pieces, function( piece ){
-        if ( valueOfCell( piece.row, piece.column ) != null &&
-             valueOfCell( piece.row + 1, piece.column ) &&
-             valueOfCell( piece.row + 2, piece.column ) &&
-             valueOfCell( piece.row + 3, piece.column ) )
+        var cellValue = valueOfCell( piece.row, piece.column );
+        if ( cellValue != null &&
+             valueOfCell( piece.row + 1, piece.column ) == cellValue &&
+             valueOfCell( piece.row + 2, piece.column ) == cellValue &&
+             valueOfCell( piece.row + 3, piece.column ) == cellValue  )
         win = valueOfCell( piece.row, piece.column );
     });
 
     _.each( board.pieces, function( piece ){
+        var cellValue = valueOfCell( piece.row, piece.column );
         if ( valueOfCell( piece.row, piece.column ) != null &&
-             valueOfCell( piece.row, piece.column + 1 ) &&
-             valueOfCell( piece.row, piece.column + 2 ) &&
-             valueOfCell( piece.row, piece.column + 3 ) )
+             valueOfCell( piece.row, piece.column + 1 )== cellValue  &&
+             valueOfCell( piece.row, piece.column + 2 )== cellValue  &&
+             valueOfCell( piece.row, piece.column + 3 )== cellValue  )
         win = valueOfCell( piece.row, piece.column );
     });
 
