@@ -91,7 +91,47 @@ io.sockets.on('connection', function (socket) {
 
         board.currentPlayer = socketClients[ currentPlayerIndex ].playerName;
 
-        io.sockets.emit('current-player', board.currentPlayer  );
+        var win = gameComplete();
+
+        if ( win )
+            io.sockets.emit('winning-player', win  );
+        else
+            io.sockets.emit('current-player', board.currentPlayer  );
 
     });
 });
+
+function gameComplete() {
+    var win = false;
+    _.each( board.pieces, function( piece ){
+        if ( valueOfCell( piece.row, piece.column ) != null &&
+             valueOfCell( piece.row + 1, piece.column ) &&
+             valueOfCell( piece.row + 2, piece.column ) &&
+             valueOfCell( piece.row + 3, piece.column ) )
+        win = valueOfCell( piece.row, piece.column );
+    });
+
+    _.each( board.pieces, function( piece ){
+        if ( valueOfCell( piece.row, piece.column ) != null &&
+             valueOfCell( piece.row, piece.column + 1 ) &&
+             valueOfCell( piece.row, piece.column + 2 ) &&
+             valueOfCell( piece.row, piece.column + 3 ) )
+        win = valueOfCell( piece.row, piece.column );
+    });
+
+    return win;
+}
+
+function valueOfCell( row, column )
+{
+    var value = null;
+
+    var cell = _.filter( board.pieces, function( piece ){
+        return piece.row == row && piece.column == column;
+    });
+
+    if ( cell && cell[0] )
+        return cell[0].player;
+
+    return null;
+}
