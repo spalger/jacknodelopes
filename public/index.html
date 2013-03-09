@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="index.js"></script>
         <style>
@@ -14,13 +14,34 @@
                 width: 50px;
                 height: 47px;
                 background: blue;
+                background-position: top center;;
+                background-size: 112%;
                 position: absolute;
                 border-radius: 30px;
                 margin: 2px;
                 top: 0px;
+
             }
             #make-your-move {
                 display: none;
+            }
+            #board .piece.jackalope {
+                background: url(/imgs/jackalope.jpg);
+            }
+            #board .piece.fennecfox {
+                background: url(/imgs/fennecfox.jpg);
+            }
+            #board .piece.scorpion {
+                background: url(/imgs/scorpion.jpg);
+            }
+            #board .piece.meercat {
+                background: url(/imgs/meercat.jpg);
+            }
+            #board .piece.gilamonster {
+                background: url(/imgs/gilamonster.jpg);
+            }
+            #board .piece.roadrunner {
+                background: url(/imgs/roadrunner.jpg);
             }
         </style>
     </head>

@@ -1,5 +1,6 @@
 var socket;
 var my_player_name;
+var player_css_classes;
 var board = {
 	$: null,
 	rows: 6,
@@ -28,7 +29,7 @@ function addPiece(piece) {
 	$cell = $('#board tr:nth('+piece.row+') td:nth('+piece.column+')');
 	var position = $cell.position();
 	$('<div>')
-		.addClass('piece player '+piece.player)
+		.addClass('piece '+player_css_classes[piece.player])
 		.appendTo('#board')
 		.css({
 			left: position.left
@@ -45,7 +46,7 @@ $(function() {
 
 	drawBoard();
 
-	$('input[name=player-name]').keyup(function(ev) {
+	$('input[name=player-name]').keyup(function (ev) {
 		if (ev.which === 13) {
 			my_player_name = this.value;
 			$('.player-name').text(my_player_name)
@@ -56,22 +57,28 @@ $(function() {
 		}
 	});
 
-	board.$.on('click', 'td', function() {
+	board.$.on('click', 'td', function () {
 		if (is_my_turn) {
 			is_my_turn = false;
 			socket.emit('new-piece', { column: $(this).data('col'), player: my_player_name });
 		}
 	});
 
-	socket = io.connect('http://localhost:3000');
+	var socket = window.socket = io.connect('http://localhost:3000');
 
 	socket.on('new-piece', function (piece) {
 		addPiece(piece);
 	});
 
-	
+	socket.on('player-css-classes', function (players) {
+		player_css_classes = players;
+	});
 
-	socket.on('current-player', function(player) {
+	socket.on('winning-player', function (winner) {
+		board.$.html('<div class="piece '+player_css_classes[winner]+'"></div><h2>'+winner+' won the bloody game!!</h2>');
+	})
+
+	socket.on('current-player', function (player) {
 		if (player === my_player_name) {
 			is_my_turn = true;
 			$('#make-your-move').show();
