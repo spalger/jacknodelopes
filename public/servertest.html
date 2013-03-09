@@ -3,7 +3,7 @@
     <script src="index.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io.connect('http://localhost:1337');
+        var socket = io.connect('http://localhost:3000');
         socket.on('board', function (board) {
             console.log(board);
         });
