@@ -19,7 +19,7 @@ var board       = {
     currentPlayer   : null,
     rows            : 6,
     columns         : 6,
-    pieces          : [ { row: 3, column: 2, player : "red" } ]
+    pieces          : []
 };
 
 app.configure(function(){
@@ -33,9 +33,6 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
 
 server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
@@ -60,7 +57,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('new-piece', function (piece) {
-
+        piece.player = socket.playerName;
         var minRow = board.rows;
 
         for( var i = 0 ; i < board.pieces.length; i++ ) {
@@ -93,8 +90,15 @@ io.sockets.on('connection', function (socket) {
 
         var win = gameComplete();
 
-        if ( win )
+        if ( win ) {
             io.sockets.emit('winning-player', win  );
+            board       = {
+                currentPlayer   : null,
+                rows            : 6,
+                columns         : 6,
+                pieces          : []
+            };
+        }
         else
             io.sockets.emit('current-player', board.currentPlayer  );
 

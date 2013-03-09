@@ -1,4 +1,4 @@
-
+var socket;
 var my_player_name;
 var board = {
 	$: null,
@@ -63,7 +63,7 @@ $(function() {
 		}
 	});
 
-	var socket = io.connect('http://localhost:3000');
+	socket = io.connect('http://localhost:3000');
 
 	socket.on('new-piece', function (piece) {
 		addPiece(piece);
