@@ -15,6 +15,7 @@ var app = express();
 var server      = require('http').createServer(app)
 var io          = require('socket.io').listen(server);
 
+
 var board       = {
     rows    : 6,
     columns : 6,
@@ -42,19 +43,26 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function (socket) {
 
+    for( var i = 0; i < board.pieces; i++  )  {
+        socket.emit( 'new-piece', board.pieces[i] );
+    }
+
     socket.on('request-board', function (data) {
         socket.emit('board',  board );
     });
 
-    socket.on('place-piece', function (data) {
+    socket.on('place-piece', function (piece) {
+
         var minRow = board.rows;
 
         for( var i = 0 ; board.pieces.length; i++ ) {
-            if ( board.pieces[i].column = data.column &&
+            if ( board.pieces[i].column = piece.column &&
                  board.pieces[i].row < minRow )
                 minRow = board.pieces[i].row;
         }
-        data.row = minRow - 1;
-        board.pieces.push( data );
+
+        piece.row = minRow - 1;
+        board.pieces.push( piece );
+        io.sockets.emit( 'new-piece', piece );
     });
 });
