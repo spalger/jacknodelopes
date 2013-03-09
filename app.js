@@ -86,7 +86,9 @@ io.sockets.on('connection', function (socket) {
         if ( currentPlayerIndex == socketClients.length )
             currentPlayerIndex = 0;
 
-        io.sockets.emit('current-player', socketClients[ currentPlayerIndex ].playerName  );
+        board.currentPlayer = socketClients[ currentPlayerIndex ].playerName;
+
+        io.sockets.emit('current-player', board.currentPlayer  );
 
     });
 });
