@@ -64,7 +64,7 @@ io.sockets.on('connection', function (socket) {
         var minRow = board.rows;
 
         for( var i = 0 ; i < board.pieces.length; i++ ) {
-            if ( board.pieces[i].column = piece.column &&
+            if ( board.pieces[i].column == piece.column &&
                  board.pieces[i].row < minRow )
                 minRow = board.pieces[i].row;
         }
