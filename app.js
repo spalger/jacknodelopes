@@ -51,7 +51,7 @@ io.sockets.on('connection', function (socket) {
         socket.emit('board',  board );
     });
 
-    socket.on('place-piece', function (piece) {
+    socket.on('new-piece', function (piece) {
 
         var minRow = board.rows;
 
