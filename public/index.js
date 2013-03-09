@@ -1,25 +1,21 @@
 
-var my_player_name = 'spencer';
+var my_player_name;
 var board = {
-	columns : 5,
-	rows : 8,
-	pieces : [ {
-		row: 5,
-		column: 3,
-		player: "spencer"
-	} ]
+	rows: 6,
+	cols: 6,
+	pieces: []
 };
 
 function drawBoard() {
-	var rows, cols, html = "<table>";
+	var rows, cols, html = '<table>';
 	for ( row = 0; row < board.rows; row ++ ) {
-		html += "<tr>";
+		html += '<tr>';
 		for ( col = 0; col < board.columns; col ++ ) {
-			html += "<td></td>";
+			html += '<td data-col="'+col+'" ></td>';
 		}
-		html += "</tr>";
+		html += '</tr>';
 	}
-	$('#board').html(html+"</table>");
+	$('#board').html(html+'</table>');
 	board.pieces.forEach(function(piece){
 		addPiece(piece)
 	})
@@ -42,8 +38,18 @@ function addPiece(piece) {
 }
 
 $(function() {
+
+	$('input[name=player-name]').change(function() {
+		my_player_name = this.value;
+	});
+
 	$('#board').on('click', 'td', function() {
-		var x = $(this).data('x');
-		var y = $(this).data('y');
-	})
-})
+		socket.emit('new-column', { column: $(this).data('col'), player: my_player_name });
+	});
+
+	var socket = io.connect('http://localhost:3000');
+
+	socket.on('new-piece', function (piece) {
+		addPiece(piece);
+	});
+});
