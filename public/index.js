@@ -57,7 +57,10 @@ $(function() {
 	});
 
 	board.$.on('click', 'td', function() {
-		socket.emit('new-piece', $(this).data('col'));
+		if (is_my_turn) {
+			is_my_turn = false;
+			socket.emit('new-piece', { column: $(this).data('col'), player: my_player_name });
+		}
 	});
 
 	var socket = io.connect('http://localhost:3000');
@@ -66,12 +69,15 @@ $(function() {
 		addPiece(piece);
 	});
 
+	
+
 	socket.on('current-player', function(player) {
 		if (player === my_player_name) {
 			is_my_turn = true;
-			$('#make_your_move').show();
+			$('#make-your-move').show();
 		} else {
 			is_my_turn = false;
+			$('#make-your-move').hide();
 		}
 	})
 });
