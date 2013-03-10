@@ -4,14 +4,35 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="index.js"></script>
         <style>
+            body {
+                background: url(http://valtorta.org/images/desert.jpg);
+                font-family: sans-serif;
+                text-align: center;
+                color: white;
+                text-shadow: 2px 2px 5px #666666;
+            }
+            h1 {
+                font-size: 
+            }
+            input {
+                width: 350px;
+                font-size: 18px;
+                padding: 9px 10px;
+                margin: 10px auto;
+                display: block;
+            }
             #board {
                 text-align: center;
+            }
+            #board table {
+                margin: 0 auto;
             }
             #board td {
                 width: 50px;
                 height: 50px;
                 cursor: pointer;
                 border: 1px solid black;
+                background: white;
             }
             #board .piece {
                 width: 50px;
@@ -49,6 +70,9 @@
         </style>
     </head>
     <body>
+        <h1>
+            Connect Four &trade;
+        </h1>
         <input name="player-name" placeholder="insert your name here">
         <div id="board">
 
@@ -56,5 +80,8 @@
         <div id="make-your-move">
             MAKE YOUR MOVE <span class="player-name"></span>!
         </div>
+        <p>
+            &copy; 2013 Connect Four and the Jack-Node-Lope name are registered trademarks of us.
+        </p>
     </body>
 </html>
